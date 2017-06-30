@@ -10,18 +10,18 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.TimeZone;
 
-public class SUtil {
+public class JsonUtil {
   public static ObjectMapper objectMapper = null;
   static {
-    synchronized (SUtil.class) {
-      if (SUtil.objectMapper == null) {
-        SUtil.objectMapper = new ObjectMapper();
-        SUtil.objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-        SUtil.objectMapper.configure(SerializationFeature.WRITE_NULL_MAP_VALUES, false);
-        SUtil.objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        SUtil.objectMapper.configure(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES, false);
-        SUtil.objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        SUtil.objectMapper.setTimeZone(TimeZone.getTimeZone("GMT+8"));
+    synchronized (JsonUtil.class) {
+      if (objectMapper == null) {
+        objectMapper = new ObjectMapper();
+        objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+        objectMapper.configure(SerializationFeature.WRITE_NULL_MAP_VALUES, false);
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        objectMapper.configure(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES, false);
+        objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        objectMapper.setTimeZone(TimeZone.getTimeZone("GMT+8"));
       }
     }
   }
@@ -31,7 +31,7 @@ public class SUtil {
     if (Map.class.isAssignableFrom(c)) {
       return (T) source;
     } else {
-      return SUtil.toObject(SUtil.toJSON(source), c);
+      return JsonUtil.toObject(JsonUtil.toJSON(source), c);
     }
   }
 
@@ -39,13 +39,13 @@ public class SUtil {
     if (Map.class.isAssignableFrom(source.getClass())) {
       return (Map) source;
     } else {
-      return SUtil.toObject(SUtil.toJSON(source), HashMap.class);
+      return JsonUtil.toObject(JsonUtil.toJSON(source), HashMap.class);
     }
   }
 
   public static String toJSON(Object object) {
     try {
-      return SUtil.objectMapper.writeValueAsString(object);
+      return objectMapper.writeValueAsString(object);
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -54,7 +54,7 @@ public class SUtil {
 
   public static <T> T toObject(String json, Class<T> c) {
     try {
-      return SUtil.objectMapper.readValue(json, c);
+      return objectMapper.readValue(json, c);
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -63,7 +63,7 @@ public class SUtil {
 
   public static <T> T toObject(String json, TypeReference<T> type) {
     try {
-      return SUtil.objectMapper.readValue(json, type);
+      return objectMapper.readValue(json, type);
     } catch (Exception e) {
       e.printStackTrace();
     }

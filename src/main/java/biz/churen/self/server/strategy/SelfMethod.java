@@ -1,25 +1,28 @@
 package biz.churen.self.server.strategy;
 
-import biz.churen.self.util.SUtil;
-import com.fasterxml.jackson.core.type.TypeReference;
+import biz.churen.self.SelfApplication;
+import biz.churen.self.util.JsonUtil;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.core.DefaultParameterNameDiscoverer;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.Map;
 
-/**
- * Created by lihai5 on 2017/6/2.
- */
 public class SelfMethod {
   public Method method;
+  public String[] parameterNames;
+  public String mappingUrl;
   public Object object;
 
   // constructors
   public SelfMethod(Object object, Method method, String url) {
     this.object = object;
     this.method = method;
+    this.parameterNames = SelfApplication.ctx
+        .getBean(DefaultParameterNameDiscoverer.class).getParameterNames(method);
+    this.mappingUrl = url;
   }
 
   public Object[] matchSelfParams(Object[] o, Map<String, String> params) {
@@ -32,8 +35,7 @@ public class SelfMethod {
       if (StringUtils.isNotEmpty(selfParam.name())) {
         o[i] = params.get(selfParam.name());
       } else {
-        // TODO find right parameter name
-        o[i] = params.get(p.getName());
+        o[i] = params.get(parameterNames[i]);
       }
     }
     return o;
@@ -45,7 +47,7 @@ public class SelfMethod {
     for (int i = 0; i < ps.length; i++) {
       Parameter p = ps[i];
       if (!p.isAnnotationPresent(SelfBody.class)) { continue; }
-      o[i] = SUtil.toObject(jsonString, p.getType());
+      o[i] = JsonUtil.toObject(jsonString, p.getType());
     }
     return o;
   }
@@ -56,7 +58,7 @@ public class SelfMethod {
     for (int i = 0; i < ps.length; i++) {
       Parameter p = ps[i];
       if (!p.isAnnotationPresent(SelfBody.class)) { continue; }
-      o[i] = SUtil.mapToObject(params, p.getType());
+      o[i] = JsonUtil.mapToObject(params, p.getType());
     }
     return o;
   }

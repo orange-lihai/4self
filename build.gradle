@@ -1,8 +1,8 @@
 apply plugin: 'java'
-apply plugin: 'eclipse'
+apply plugin: 'idea'
 apply plugin: 'application'
 
-mainClassName = 'biz.churen.self.Application'
+mainClassName = 'biz.churen.self.SelfApplication'
 
 // tag::repositories[]
 repositories {
@@ -22,8 +22,16 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 dependencies {
+    // spring
     compile 'org.springframework:spring-context:4.3.8.RELEASE'
-    compile 'org.projectlombok:lombok-maven:1.16.16.0'
+    // compile 'org.projectlombok:lombok-maven:1.16.16.0'
+    // spring-jdbc, mybatis
+    compile("org.mybatis:mybatis:3.2.7")
+    compile("org.mybatis:mybatis-spring:1.2.2")
+    compile("org.springframework:spring-jdbc:4.1.0.RELEASE")
+    compile("mysql:mysql-connector-java:5.1.37")
+
+    // netty
     compile group: 'io.netty', name: 'netty-all', version: '4.1.11.Final'
 
     //json
@@ -38,6 +46,20 @@ dependencies {
     compile  'log4j:log4j:1.2.17'
     compile  'org.slf4j:slf4j-log4j12:1.7.16'
 
+    // mockito
+    // https://mvnrepository.com/artifact/org.mockito/mockito-core
+    // https://stackoverflow.com/questions/19845213/how-to-get-the-methodinfo-of-a-java-8-method-reference
+    // compile group: 'org.mockito', name: 'mockito-core', version: '2.8.9'
+
+    compile group: 'org.jodd', name: 'jodd-all', version: '3.8.6'
+    /*
+    // https://mvnrepository.com/artifact/org.jodd/jodd-core
+    compile group: 'org.jodd', name: 'jodd-core', version: '3.8.6'
+    // https://mvnrepository.com/artifact/org.jodd/jodd-bean
+    compile group: 'org.jodd', name: 'jodd-bean', version: '3.8.6'
+    // https://mvnrepository.com/artifact/org.jodd/jodd-proxetta
+    compile group: 'org.jodd', name: 'jodd-proxetta', version: '3.8.6'
+    */
 
 }
 // end::dependencies[]

@@ -2,7 +2,7 @@ package biz.churen.self.server;
 
 import biz.churen.self.SelfApplication;
 import biz.churen.self.server.strategy.SelfMethod;
-import biz.churen.self.util.SUtil;
+import biz.churen.self.util.JsonUtil;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
@@ -12,14 +12,9 @@ import io.netty.handler.codec.http.multipart.Attribute;
 import io.netty.handler.codec.http.multipart.HttpPostRequestDecoder;
 import io.netty.handler.codec.http.multipart.InterfaceHttpData;
 import io.netty.util.ReferenceCountUtil;
-import jdk.nashorn.internal.objects.NativeJSON;
-import org.apache.commons.lang3.StringUtils;
-import sun.net.util.URLUtil;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
@@ -105,7 +100,7 @@ public class DiscardServerHandler extends ChannelInboundHandlerAdapter {
       if (msg instanceof HttpContent) {
         Object rs = selfMethod.invoke(args);
         FullHttpResponse response = new DefaultFullHttpResponse(
-            HttpVersion.HTTP_1_1, HttpResponseStatus.OK, Unpooled.wrappedBuffer(SUtil.toJSON(rs).getBytes("UTF-8")));
+            HttpVersion.HTTP_1_1, HttpResponseStatus.OK, Unpooled.wrappedBuffer(JsonUtil.toJSON(rs).getBytes("UTF-8")));
         response.headers().set(HttpHeaderNames.CONTENT_TYPE, "application/json");
         response.headers().set(HttpHeaderNames.CONTENT_LENGTH, response.content().readableBytes());
         if (HttpUtil.isKeepAlive(request)) {
