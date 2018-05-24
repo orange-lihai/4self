@@ -1,4 +1,4 @@
-package biz.churen.self.ds;
+package biz.churen.self.ds.tree;
 
 /**
  * Data Structure of Tree
