@@ -197,6 +197,36 @@ public class XSort {
     return arrHeap;
   }
 
+  private static int[] bubbleSort(int[] arrBubble, boolean desc) {
+    if (null == arrBubble || arrBubble.length <= 1) { return arrBubble; }
+    for (int i = 0; i < arrBubble.length; i++) {
+      for (int j = arrBubble.length - 1; j > i; j--) {
+        if (desc ? (arrBubble[j] > arrBubble[j - 1]) : (arrBubble[j] < arrBubble[j - 1])) {
+          XNumber.swap(arrBubble, j, j - 1);
+        }
+      }
+    }
+    return arrBubble;
+  }
+
+  private static int[] quickSort(int[] arrQuick, int low, int high) {
+    if (null == arrQuick || arrQuick.length <= 1) { return arrQuick; }
+    if (low < high) {
+      // XNumber.swap(arrQuick, low, (low + high) / 2);
+      int i = low, j = high, x = arrQuick[low];
+      while (i < j) {
+        while(i < j && arrQuick[j] >= x) { j--; }
+        if(i < j) { arrQuick[i++] = arrQuick[j]; }
+
+        while(i < j && arrQuick[i] < x) { i++; }
+        if(i < j) { arrQuick[j--] = arrQuick[i]; }
+      }
+      arrQuick[i] = x;
+      quickSort(arrQuick, low, i - 1);
+      quickSort(arrQuick, i + 1, high);
+    }
+    return arrQuick;
+  }
 
   // print function
   private static void print(int[] arr, String desc, String split) {
@@ -250,7 +280,19 @@ public class XSort {
     int[] arrHeapOut = XSort.heapSort(arrHeap, false);
     XSort.print(arrHeapOut, "arrHeapOut", " ");
     System.out.println("\n");
+
+    // 冒泡排序
+    int[] arrBubble = XNumber.randomIntArr(20, 0, 100);
+    XSort.print(arrBubble, "arrBubble", " ");
+    int[] arrBubbleOut = XSort.bubbleSort(arrBubble, true);
+    XSort.print(arrBubbleOut, "arrBubbleOut", " ");
+    System.out.println("\n");
+
+    // 快速排序
+    int[] arrQuick = XNumber.randomIntArr(15, 0, 100);
+    XSort.print(arrQuick, "arrQuick", " ");
+    int[] arrQuickOut = XSort.quickSort(arrQuick, 0, arrQuick.length - 1);
+    XSort.print(arrQuickOut, "arrQuickOut", " ");
+    System.out.println("\n");
   }
-
-
 }
