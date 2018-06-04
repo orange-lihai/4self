@@ -21,9 +21,9 @@ import biz.churen.self.util.XNumber;
  *          |              |--- 交换排序 --|
  *          |              |              |-- 快速排序
  *          |              |
- *          |              |--- 归并排序
+ *          |              |--- 合并排序
  *          |              |
- *          |              |--- 基数排序
+ *          |              |--- 基数排序/桶排序/计数排序
  * 排序 -----
  *          |
  *          |
@@ -228,6 +228,34 @@ public class XSort {
     return arrQuick;
   }
 
+  private static int[] mergeSort(int[] arrMerge, int low, int high) {
+    if (null == arrMerge || low >= high) { return arrMerge; }
+    int len = (high - low) + 1;
+    if (len > 2) {
+      mergeSort(arrMerge, low, low + len / 2);
+      mergeSort(arrMerge, low + len / 2 + 1, high);
+      for (int j = (low + len / 2 + 1); j <= high; j++) {
+        int temp = arrMerge[j];
+        int i = j - 1;
+        for (; i >= low; i--) {
+          if (temp < arrMerge[i]) {
+            arrMerge[i + 1] = arrMerge[i];
+          } else {
+            if (i < (j - 1)) { arrMerge[i + 1] = temp; }
+            break;
+          }
+        }
+        if (i < low) { arrMerge[low] = temp; }
+      }
+    } else if (len == 2) {
+      if (arrMerge[low] > arrMerge[high]) {
+        XNumber.swap(arrMerge, low, high);
+      }
+    }
+    return arrMerge;
+  }
+
+
   // print function
   private static void print(int[] arr, String desc, String split) {
     if (null == arr || arr.length <= 0) { return; }
@@ -294,5 +322,13 @@ public class XSort {
     int[] arrQuickOut = XSort.quickSort(arrQuick, 0, arrQuick.length - 1);
     XSort.print(arrQuickOut, "arrQuickOut", " ");
     System.out.println("\n");
+
+    // 合并排序
+    int[] arrMerge = XNumber.randomIntArr(7, 0, 100);
+    XSort.print(arrMerge, "arrMerge", " ");
+    int[] arrMergeOut = XSort.mergeSort(arrMerge, 0, arrMerge.length - 1);
+    XSort.print(arrMergeOut, "arrMergeOut", " ");
+    System.out.println("\n");
   }
+
 }

@@ -25,6 +25,16 @@ public class XNumber {
     return r;
   }
 
+  public static Integer[] randomIntegerArr(int len, int min, int max) {
+    if (len <= 0) { return null; }
+    Integer[] r = new Integer[len];
+    for (int i = 0; i < r.length; i++) {
+      Double d = (Math.random() * XNumber.next10(max));
+      r[i] = d.intValue() % (max - min) + min;
+    }
+    return r;
+  }
+
   public static int[] swap(int[] arr, int i, int j) {
     int temp = arr[i];
     arr[i] = arr[j];
