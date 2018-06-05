@@ -31,6 +31,7 @@ public class DS0Vector {
     v.insert("f");
     v.insert("g");
     v.insert("h");
+    String x = v.get(2);
 
     v.remove(0);
     v.remove(2, 4);

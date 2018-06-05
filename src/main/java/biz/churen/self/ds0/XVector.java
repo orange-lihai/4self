@@ -3,7 +3,7 @@ package biz.churen.self.ds0;
 import biz.churen.self.util.XNumber;
 
 import java.lang.reflect.Array;
-import java.util.function.BiFunction;
+import java.util.Comparator;
 import java.util.function.Consumer;
 
 public class XVector<E extends Comparable> {
@@ -35,6 +35,12 @@ public class XVector<E extends Comparable> {
   }
 
   // private functions
+  private void checkRange(int rank) {
+    if (0 > rank || rank >= _size) {
+      throw new IndexOutOfBoundsException("the parameter rank, must range in: 0 <= rank < " + _size);
+    }
+  }
+
   private void expand() {
     if (_size < _capacity) { return; }
     if (_capacity < DEFAULT_CAPACITY) { _capacity = DEFAULT_CAPACITY; }
@@ -69,16 +75,71 @@ public class XVector<E extends Comparable> {
   }
 
   // sort
-  public boolean bubble(int low, int high) { return false; }
-  public void bubbleSort(int low, int high) {}
-  public void merge(int low, int mid, int high) {}
-  public void mergeSort(int low, int high) {}
-  public int partition(int low, int high) { return 0; }
-  public void quickSort(int low, int high) {}
-  public void heapSort(int low, int high) {}
+  public boolean bubble(int low, int high, Comparator<? super E> c) {
+    return false;
+  }
+
+  public void bubbleSort(int low, int high, Comparator<? super E> c) {
+
+  }
+
+  public void merge(int low, int mid, int high, Comparator<? super E> c) {
+
+  }
+
+  public void mergeSort(int low, int high, Comparator<? super E> c) {
+
+  }
+
+  public int partition(int low, int high, Comparator<? super E> c) {
+    return 0;
+  }
+
+  public void quickSort(int low, int high, Comparator<? super E> c) {
+
+  }
+
+  public void heapSort(int low, int high, Comparator<? super E> c) {
+    
+  }
+
+  // 对 [low, high) 排序
+  public void sort(int low, int high, Comparator<? super E> c) {
+    if (empty()) { return; }
+    quickSort(low, high, c);
+  }
+
+  // 对 [low, high) 排序
+  public void sort(int low, int high) {
+    if (empty()) { return; }
+    quickSort(low, high, Comparable::compareTo);
+  }
+
+  // 整体排序
+  public void sort(Comparator<? super E> c) { sort(0, _size, c);}
+
+  // 整体排序
+  public void sort() {
+    sort(0, _size, Comparable::compareTo);
+  }
+
+  // 对 [low, high) 置乱
+  public void unSort(int low, int high) {
+    for (int i = high - 1; i > low; i--) {
+      int _rand = (int) (Math.random() * (XNumber.next10(i)));
+      int _r = (_rand % (i - low)) + low;
+      E temp = _elem[i];
+      _elem[i] = _elem[_r];
+      _elem[_r] = temp;
+    }
+  }
+
+  // 整体置乱
+  public void unSort() { unSort(0, _size); }
   
   // read only
   public int size() { return _size; }
+
   public boolean empty() { return _size <= 0; }
 
   // 判断向量是否有序, 返回逆序相邻元素对的总数
@@ -103,13 +164,74 @@ public class XVector<E extends Comparable> {
     return -1;
   }
 
-  public int search(E e) { return _size <= 0 ? -1 : search(e, 0, _size); }
-  public int search(E e, int low, int high) { return 0; }
-  public E get(int rank) { return _elem[rank]; }
-  public void put(int rank, E e) { _elem[rank] = e; }
+  // 有序向量查找方法 search()
+  public int search(E e, Comparator<? super E> c) { return _size <= 0 ? -1 : search(e, 0, _size, c); }
 
+  // 有序向量查找方法 search()
+  public int search(E e, int low, int high, Comparator<? super E> c) {
+    if (Math.random() > 0.5) {
+      return binarySearch(e, low, high, c);
+    } else {
+      return fibonacciSearch(e, low, high, c);
+    }
+  }
+
+  // 有序向量查找方法 search()
+  public int search(E e) { return _size <= 0 ? -1 : search(e, 0, _size, Comparable::compareTo); }
+  
+  // 有序向量查找方法 search()
+  public int search(E e, int low, int high) {
+    if (Math.random() > 0.5) {
+      return binarySearch(e, low, high, Comparable::compareTo);
+    } else {
+      return fibonacciSearch(e, low, high, Comparable::compareTo);
+    }
+  }
+
+  public int binarySearch(E e, int low, int high, Comparator<? super E> c) {
+    while (low < high) {
+      int mid = (high + low) / 2;
+      int k = c.compare(e, _elem[mid]);
+      if (k > 0) {
+        low = mid + 1;
+      } else if (k < 0) {
+        high = mid;
+      } else {
+        return mid;
+      }
+    }
+    return -1;
+  }
+
+  public int fibonacciSearch(E e, int low, int high, Comparator<? super E> c) {
+    XFibonacci fib = new XFibonacci(high - low);
+    fib.setCurrent(fib.size() - 1);
+    while (low < high) {
+      while ((high - low) < fib.get()) { fib.pre(); }
+      int mid = low + fib.get() - 1;
+      int k = c.compare(e, _elem[mid]);
+      if (k > 0) {
+        low = mid + 1;
+      } else if (k < 0) {
+        high = mid;
+      } else {
+        return mid;
+      }
+    }
+    return -1;
+  }
 
   // writable
+  public E get(int rank) {
+    checkRange(rank);
+    return _elem[rank];
+  }
+
+  public void put(int rank, E e) {
+    checkRange(rank);
+    _elem[rank] = e;
+  }
+
   public E remove(int rank) {
     E e = get(rank);
     remove(rank, rank + 1);
@@ -137,23 +259,6 @@ public class XVector<E extends Comparable> {
     return 0;
   }
   public int insert(E e) { return insert(_size, e); }
-
-  // 对 [low, high) 排序
-  public void sort(int low, int high, BiFunction<E, E, Integer> compare) {}
-  // 整体排序
-  public void sort(BiFunction<E, E, Integer> compare) { sort(0, _size, compare);}
-  // 对 [low, high) 置乱
-  public void unSort(int low, int high) {
-    for (int i = high - 1; i > low; i--) {
-      int _rand = (int) (Math.random() * (XNumber.next10(high)));
-      int _r = (_rand % (i - low)) + low;
-      E temp = _elem[i];
-      _elem[i] = _elem[_r];
-      _elem[_r] = temp;
-    }
-  }
-  // 整体置乱
-  public void unSort() { unSort(0, _size); }
 
   // 无序去重
   public int deDuplicate() {
@@ -189,8 +294,16 @@ public class XVector<E extends Comparable> {
   }
 
 
-
-
-
+  // equals
+  @SuppressWarnings({"unchecked"})
+  public boolean equals(XVector<? extends E> v) {
+    if (null == v || _size != v._size) { return false; }
+    for (int i = 0; i < _size; i++) {
+      if (0 != _elem[i].compareTo(v._elem[i])) {
+        return false;
+      }
+    }
+    return true;
+  }
 
 }
