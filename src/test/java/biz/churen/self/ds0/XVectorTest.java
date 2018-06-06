@@ -18,6 +18,7 @@ class XVectorTest {
   }
 
   @BeforeAll static void beforeAll(TestInfo testInfo) {
+    System.out.println();
     System.out.println(testInfo.getDisplayName() + " ==> Start ");
   }
 
@@ -59,9 +60,6 @@ class XVectorTest {
   }
 
   @Test void unSort() {
-  }
-
-  @Test void unSort1() {
   }
 
   @Test void size() {
