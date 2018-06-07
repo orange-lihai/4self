@@ -16,20 +16,25 @@ public class XVector<E extends Comparable> {
   public XVector(Class<?> clazz) {
     this(clazz, DEFAULT_CAPACITY);
   }
+
   public XVector(Class<?> clazz, int capacity) {
     _size = 0;
     _capacity = capacity;
     _elem = newArr(clazz, _capacity);
   }
+
   public XVector(E[] src, int low, int high) {
     copyFrom(src, low, high);
   }
+
   public XVector(E[] src, int n) {
     copyFrom(src, 0, n);
   }
+
   public XVector(XVector<E> src, int low, int high) {
     copyFrom(src._elem, low, high);
   }
+
   public XVector(XVector<E> src, int n) {
     copyFrom(src._elem, 0, n);
   }
@@ -233,6 +238,7 @@ public class XVector<E extends Comparable> {
   }
 
   public E remove(int rank) {
+    checkRange(rank);
     E e = get(rank);
     remove(rank, rank + 1);
     return e;
