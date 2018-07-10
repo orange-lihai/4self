@@ -4,23 +4,35 @@ import biz.churen.self.util.XNumber;
 
 import java.lang.reflect.Array;
 import java.util.Comparator;
+import java.util.Objects;
 import java.util.function.Consumer;
 
-public class XVector<E extends Comparable> {
+public class XVector<E> {
   private static final int DEFAULT_CAPACITY = 3;
   private int _size;
   private int _capacity;
   private E[] _elem;
 
+  // default comparator
+  private Comparator<E> _comparator = (o1, o2) -> {
+    boolean b = ((null != o1) && (o1.equals(o2)));
+    if (b) { return 0; }
+    if (null != o1 && null != o2) {
+      return Objects.compare(o1.hashCode(), o2.hashCode(), Integer::compare);
+    } else {
+      return -1;
+    }
+  };
+
   // constructors
-  public XVector(Class<?> clazz) {
-    this(clazz, DEFAULT_CAPACITY);
+  public XVector() {
+    this(DEFAULT_CAPACITY);
   }
 
-  public XVector(Class<?> clazz, int capacity) {
+  public XVector(int capacity) {
     _size = 0;
     _capacity = capacity;
-    _elem = newArr(clazz, _capacity);
+    _elem = newArr(Object.class, _capacity);
   }
 
   public XVector(E[] src, int low, int high) {
@@ -117,7 +129,7 @@ public class XVector<E extends Comparable> {
   // 对 [low, high) 排序
   public void sort(int low, int high) {
     if (empty()) { return; }
-    quickSort(low, high, Comparable::compareTo);
+    quickSort(low, high, _comparator);
   }
 
   // 整体排序
@@ -125,7 +137,7 @@ public class XVector<E extends Comparable> {
 
   // 整体排序
   public void sort() {
-    sort(0, _size, Comparable::compareTo);
+    sort(0, _size, _comparator);
   }
 
   // 对 [low, high) 置乱
@@ -152,7 +164,7 @@ public class XVector<E extends Comparable> {
   public int disOrdered() {
     int n = 0;
     for (int i = 1; i < _size; i++) {
-      if (_elem[i].compareTo(_elem[i - 1]) < 0) { n++; }
+      if (_comparator.compare(_elem[i], (_elem[i - 1])) < 0) { n++; }
     }
     return n;
   }
@@ -164,7 +176,7 @@ public class XVector<E extends Comparable> {
   @SuppressWarnings({"unchecked"})
   public int find(E e, int low, int high) {
     for (int i = low; i < high; i++) {
-      if (0 == _elem[i].compareTo(e)) { return i; }
+      if (0 == _comparator.compare(_elem[i], e)) { return i; }
     }
     return -1;
   }
@@ -182,14 +194,14 @@ public class XVector<E extends Comparable> {
   }
 
   // 有序向量查找方法 search()
-  public int search(E e) { return _size <= 0 ? -1 : search(e, 0, _size, Comparable::compareTo); }
+  public int search(E e) { return _size <= 0 ? -1 : search(e, 0, _size, _comparator); }
   
   // 有序向量查找方法 search()
   public int search(E e, int low, int high) {
     if (Math.random() > 0.5) {
-      return binarySearch(e, low, high, Comparable::compareTo);
+      return binarySearch(e, low, high, _comparator);
     } else {
-      return fibonacciSearch(e, low, high, Comparable::compareTo);
+      return fibonacciSearch(e, low, high, _comparator);
     }
   }
 
@@ -281,7 +293,7 @@ public class XVector<E extends Comparable> {
   public int uniquify() {
     int i = 0, j = 0;
     while (++j < _size) {
-      if (_elem[j].compareTo(_elem[i]) != 0) {
+      if (_comparator.compare(_elem[j], _elem[i]) != 0) {
         _elem[++i] = _elem[j];
       }
     }
@@ -305,7 +317,7 @@ public class XVector<E extends Comparable> {
   public boolean equals(XVector<? extends E> v) {
     if (null == v || _size != v._size) { return false; }
     for (int i = 0; i < _size; i++) {
-      if (0 != _elem[i].compareTo(v._elem[i])) {
+      if (0 != _comparator.compare(_elem[i], v._elem[i])) {
         return false;
       }
     }

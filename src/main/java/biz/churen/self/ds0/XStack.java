@@ -2,8 +2,8 @@ package biz.churen.self.ds0;
 
 public class XStack<E extends Comparable> extends XVector<E> {
   
-  public XStack(Class<?> clazz) {
-    super(clazz);
+  public XStack() {
+    super();
   }
 
   public void push(E e) {

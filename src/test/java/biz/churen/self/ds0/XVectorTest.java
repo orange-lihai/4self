@@ -152,7 +152,7 @@ class XVectorTest {
   }
 
   @Test void insert() {
-    XVector<String> a = new XVector<>(String.class);
+    XVector<String> a = new XVector<>();
     a.insert("a");
 
     String[] arrB = {"a"};
@@ -197,7 +197,7 @@ class XVectorTest {
   @Test void traverse() {
     String[] arrA = {"a", "b", "c"};
     XVector<String> a = new XVector<>(arrA, arrA.length);
-    XVector<String> b = new XVector<>(String.class, arrA.length);
+    XVector<String> b = new XVector<>(arrA.length);
     Consumer<String> consumer = s -> {
       System.out.println(s);
       b.insert(s);

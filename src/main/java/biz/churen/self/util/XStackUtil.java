@@ -7,52 +7,6 @@ import java.util.*;
  */
 public class XStackUtil {
 
-  // final Set<Character> parentheses = new HashSet<>(Arrays.asList('(', ')', '[', ']', '{', '}'));
-  static final Set<Character> leftParentheses = new HashSet<>(Arrays.asList('(', '[', '{'));
-  static final Set<Character> rightParentheses = new HashSet<>(Arrays.asList(')', ']', '}'));
-  // + - * / ^ ! ( ) EOF
-  public enum operator {ADD, SUB, MUL, DIV, POW, FAC, L_P, R_P, EOF};
-  static final char[][] operatorPrecedence = {
-    {'>', '>', '<', '<', '<', '<', '<', '>', '>'}, // +
-    {'>', '>', '<', '<', '<', '<', '<', '>', '>'}, // -
-    {'>', '>', '>', '>', '<', '<', '<', '>', '>'}, // *
-    {'>', '>', '>', '>', '<', '<', '<', '>', '>'}, // /
-    {'>', '>', '>', '>', '>', '<', '<', '>', '>'}, // ^
-    {'>', '>', '>', '>', '>', '>', ' ', '>', '>'}, // !
-    {'<', '<', '<', '<', '<', '<', '<', '=', ' '}, // (
-    {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '}, // )
-    {'<', '<', '<', '<', '<', '<', '<', ' ', '='}  // \0
-   // +    -    *    /    ^    !    (    )    \0
-  };
-  static Map<Character, Enum> operatorToEnum = new HashMap<>();
-  static {
-    operatorToEnum.put('+', operator.ADD);
-    operatorToEnum.put('-', operator.ADD);
-    operatorToEnum.put('*', operator.ADD);
-    operatorToEnum.put('/', operator.ADD);
-    operatorToEnum.put('^', operator.ADD);
-    operatorToEnum.put('!', operator.ADD);
-    operatorToEnum.put('(', operator.ADD);
-    operatorToEnum.put(')', operator.ADD);
-    operatorToEnum.put('\0', operator.ADD);
-  }
-  public static final Set<Character> blankChar = new HashSet<>(Arrays.asList(' ', '\t', '\n'));
-
-  /**
-   * @param left left part of parentheses
-   * @param right right part of parentheses
-   * @return is valid pair
-   */
-  public static boolean parenthesesPair(Character left, Character right) {
-
-    return !(null == left || null == right)
-           && (
-               ('(' == left && ')' == right)
-            || ('[' == left && ']' == right)
-            || ('{' == left && '}' == right)
-           );
-  }
-
   /**
    *
    * @param expression
@@ -67,12 +21,12 @@ public class XStackUtil {
     Stack<Character> stack = new Stack<>();
     for (int i = 0; null != expression && i < expression.length(); i++) {
       Character c = expression.charAt(i);
-      if (!leftParentheses.contains(c) && !rightParentheses.contains(c)) { continue; }
-      if (leftParentheses.contains(c)) {
+      if (!XOperator.leftParentheses.contains(c) && !XOperator.rightParentheses.contains(c)) { continue; }
+      if (XOperator.leftParentheses.contains(c)) {
         stack.push(c);
       } else {
         Character pre = stack.empty() ? null : stack.peek();
-        if (parenthesesPair(pre, c)) { stack.pop(); pairs++; }
+        if (XOperator.parenthesesPair(pre, c)) { stack.pop(); pairs++; }
         else { stack.push(c); }
       }
     }
@@ -82,8 +36,8 @@ public class XStackUtil {
   /**
    * reverse Polish notation
    */
-  public Stack<Character> RPN(String exp) {
-    Stack<Character> stackRPN = new Stack<>();
+  public static Stack<String> RPN(String exp) {
+    Stack<String> stackRPN = new Stack<>();
     try {
       expressionEval(exp, stackRPN);
     } catch (Throwable throwable) {
@@ -92,8 +46,11 @@ public class XStackUtil {
     return stackRPN;
   }
 
-  public Double expressionEval(String exp) {
-    Stack<Character> stackRPN = new Stack<>();
+  /**
+   * 计算表达式
+   */
+  public static Double expressionEval(String exp) {
+    Stack<String> stackRPN = new Stack<>();
     Double d = null;
     try {
       d = expressionEval(exp, stackRPN);
@@ -103,44 +60,54 @@ public class XStackUtil {
     return d;
   }
 
-  public Double expressionEval(String exp, Stack<Character> stackRPN) throws Throwable {
+  /**
+   * 计算表达式, 并记录 "逆波兰表达式" 的栈
+   * 如何支持负数呢? 比如:  -1 + 2 * 3
+   */
+  public static Double expressionEval(String exp, Stack<String> stackRPN) throws Throwable {
     if (null == exp || exp.trim().isEmpty()) { return null; }
+    List<String> expList = XOperator.split(exp);
     Stack<Double> stackNum = new Stack<>();
-    Stack<Character> stackOp = new Stack<>();
-    stackOp.push('\0');
+    Stack<String> stackOp = new Stack<>();
+    stackOp.push("\0");
     int i = 0;
-    Character c;
-    while (!stackOp.isEmpty() && i <= exp.length()) {
-      if (i < exp.length()) {
-        c = exp.charAt(i++);
+    String c;
+    while (!stackOp.isEmpty() && i <= expList.size()) {
+      if (i < expList.size()) {
+        c = expList.get(i);
       } else {
-        c = '\0';
+        c = "\0";
       }
-      if (blankChar.contains(c)) { continue; }
-      if ('0' <= c && c <= '9') {
+      if (XOperator.blankChar.contains(c)) { i++; continue; }
+      if (XNumber.isNum(c)) {
         Double d = Double.valueOf(c);
         stackNum.push(d);
         stackRPN.push(c);
+        i++;
       } else {
-        char pri = operatorPrecedence[stackOp.peek()][c];
+        char pri = XOperator.operatorPrecedence[
+              XOperator.operatorToEnum.get(stackOp.peek()).ordinal()
+            ][
+              XOperator.operatorToEnum.get(c).ordinal()
+            ];
         switch (pri) {
           case '<':
-            stackOp.push(c);
+            stackOp.push(c); i++;
             break;
           case '=':
-            stackOp.pop();
+            stackOp.pop(); i++;
             break;
           case '>':
-            char op = stackOp.pop();
+            String op = stackOp.pop();
             stackRPN.push(op);
-            if ('!' == op) {
-              Double _d = stackNum.pop();
-              stackNum.push(XOperator.calc(op, _d));
-            } else {
-              Double _dOne = stackNum.pop();
-              Double _dTwo = stackNum.pop();
-              stackNum.push(XOperator.calc(op, _dOne, _dTwo));
+            int n = XOperator.consumerNum(op);
+            if (n <= 0) { throw new IllegalArgumentException("operator: " + op + " un-supported yet!"); }
+            Double[] params = new Double[n];
+            for (int j = 0; j < n; j++) {
+              params[n - j - 1] = stackNum.pop();
             }
+            stackNum.push(XOperator.calcMore(op, params));
+            break;
           default: break;
         }
       }
@@ -148,4 +115,65 @@ public class XStackUtil {
     return stackNum.size() == 1 ? stackNum.peek() : null;
   }
 
+
+  /**
+   * 皇后问题里面用到的 "皇后类"
+   */
+  class Queen {
+    int x;
+    int y;
+
+    Queen(int x, int y) { this.x = x; this.y = y; }
+
+    boolean conflict(Queen q) {
+      return (this.x == q.x) // 行冲突
+          || (this.y == q.y) // 列冲突
+          || (this.x - this.y == q.x - q.y) // y =  1 * x + b
+          || (this.x + this.y == q.x + q.y) // y = -1 * x + b
+      ;
+    }
+
+    boolean conflict(Collection<Queen> queens) {
+      if (null == queens || queens.isEmpty()) { return false; }
+      for (Queen q : queens) {
+        if (this.conflict(q)) { return true; }
+      }
+      return false;
+    }
+  }
+
+  public List<Stack<Queen>> placeQueens(int n) {
+    List<Stack<Queen>> rs = new ArrayList<>();
+    Stack<Queen> stack = new Stack<>();
+    int i = 0, j = 0;
+    while (true) {
+      if (i == 0 && j == n) { break; }
+      for (; j < n; j++) {
+        Queen t = new Queen(i, j);
+        if (!t.conflict(stack)) { break; }
+      }
+      if (j >= n || i >= n) {
+        Queen t = stack.pop();
+        i = t.x;
+        j = t.y + 1;
+      } else {
+        stack.push(new Queen(i, j));
+        if (stack.size() == n) { cloneMulti(rs, stack); } // 记录合法的解
+        i++;
+        j = 0;
+      }
+    }
+    return rs;
+  }
+
+  public void cloneMulti(List<Stack<Queen>> tar,  Stack<Queen> queens) {
+    Stack<Queen> r = new Stack<>();
+    for (int i = 0; i < queens.size(); i++) {
+      Queen newQueen = new Queen(queens.get(i).x, queens.get(i).y);
+      r.add(newQueen);
+    }
+    tar.add(r);
+  }
+
+  
 }

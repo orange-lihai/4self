@@ -1,9 +1,17 @@
 package biz.churen.self.util;
 
+import java.util.regex.Pattern;
+
 /**
  * Util Class Of Numbers
  */
 public class XNumber {
+
+  public static boolean isNum(String num) {
+    if (null == num || num.trim().length() <= 0) { return false; }
+    String regExp = "[-]?[0-9]+";
+    return Pattern.matches(regExp, num);
+  }
 
   public static int next10(int a) {
     int x = Math.abs(a);

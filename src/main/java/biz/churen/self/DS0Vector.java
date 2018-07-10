@@ -6,8 +6,8 @@ import biz.churen.self.util.XNumber;
 public class DS0Vector {
 
   public static void main(String[] args) {
-    XVector<String> v = new XVector<>(String.class);
-    XVector<String> v4 = new XVector<>(String.class, 4);
+    XVector<String> v = new XVector<>();
+    XVector<String> v4 = new XVector<>(4);
 
     String[] arr = {"a", "bb", "ccc", "dddd", "eeeee"};
     XVector<String> a = new XVector<>(arr, 2, 3);
