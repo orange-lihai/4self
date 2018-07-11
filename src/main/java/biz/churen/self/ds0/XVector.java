@@ -62,7 +62,7 @@ public class XVector<E> {
     if (_size < _capacity) { return; }
     if (_capacity < DEFAULT_CAPACITY) { _capacity = DEFAULT_CAPACITY; }
     _capacity = _capacity * 2;
-    E[] _new = newArr(_elem[0].getClass(), _capacity);
+    E[] _new = newArr(Object.class, _capacity);
     System.arraycopy(_elem, 0, _new, 0, _size);
     _elem = _new;
   }

@@ -18,6 +18,13 @@ public class XQueue<E> {
   }
 
   @SuppressWarnings({"unchecked"})
+  public XQueue() {
+    _capacity = DEFAULT_CAPACITY;
+    _header = _trailer = 0;
+    _elem = (E[]) (Array.newInstance(Object.class, _capacity));
+  }
+
+    @SuppressWarnings({"unchecked"})
   private void dilation() {
     int _size = size();
     int _trailerSize = _capacity - _trailer;
@@ -51,6 +58,16 @@ public class XQueue<E> {
       _header += 1;
     }
     return Optional.ofNullable(e);
+  }
+
+  public E pop2() {
+    dilation();
+    E e = null;
+    if (size() > 0) {
+      e = _elem[_header];
+      _header += 1;
+    }
+    return e;
   }
 
   public Optional<E> peek() {

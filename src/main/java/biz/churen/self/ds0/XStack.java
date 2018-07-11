@@ -1,6 +1,6 @@
 package biz.churen.self.ds0;
 
-public class XStack<E extends Comparable> extends XVector<E> {
+public class XStack<E> extends XVector<E> {
   
   public XStack() {
     super();
