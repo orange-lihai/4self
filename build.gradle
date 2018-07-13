@@ -22,45 +22,47 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 dependencies {
-    // spring
-    // compile 'org.springframework:spring-context:4.3.8.RELEASE'
-    // compile 'org.projectlombok:lombok-maven:1.16.16.0'
-    // spring-jdbc, mybatis
-    // compile("org.mybatis:mybatis:3.2.7")
-    // compile("org.mybatis:mybatis-spring:1.2.2")
-    // compile("org.springframework:spring-jdbc:4.1.0.RELEASE")
-    // compile("mysql:mysql-connector-java:5.1.37")
+  // spring
+  // compile 'org.springframework:spring-context:4.3.8.RELEASE'
+  // compile 'org.projectlombok:lombok-maven:1.16.16.0'
+  // spring-jdbc, mybatis
+  // compile("org.mybatis:mybatis:3.2.7")
+  // compile("org.mybatis:mybatis-spring:1.2.2")
+  // compile("org.springframework:spring-jdbc:4.1.0.RELEASE")
+  // compile("mysql:mysql-connector-java:5.1.37")
 
-    // netty
-    // compile group: 'io.netty', name: 'netty-all', version: '4.1.11.Final'
+  // netty
+  // compile group: 'io.netty', name: 'netty-all', version: '4.1.11.Final'
 
-    //json
-    // compile  'com.fasterxml.jackson.core:jackson-core:2.6.5'
-    // compile  'com.fasterxml.jackson.core:jackson-databind:2.6.5'
-    // compile  'com.fasterxml.jackson.core:jackson-annotations:2.6.5'
+  //json
+  // compile  'com.fasterxml.jackson.core:jackson-core:2.6.5'
+  // compile  'com.fasterxml.jackson.core:jackson-databind:2.6.5'
+  // compile  'com.fasterxml.jackson.core:jackson-annotations:2.6.5'
 
-    // commons
-    // compile  'org.apache.commons:commons-lang3:3.4'
+  // commons
+  // compile  'org.apache.commons:commons-lang3:3.4'
 
-    // log4j
-    // compile  'log4j:log4j:1.2.17'
-    // compile  'org.slf4j:slf4j-log4j12:1.7.16'
+  // log4j
+  // compile  'log4j:log4j:1.2.17'
+  // compile  'org.slf4j:slf4j-log4j12:1.7.16'
 
-    // mockito
-    // https://mvnrepository.com/artifact/org.mockito/mockito-core
-    // https://stackoverflow.com/questions/19845213/how-to-get-the-methodinfo-of-a-java-8-method-reference
-    // compile group: 'org.mockito', name: 'mockito-core', version: '2.8.9'
+  // mockito
+  // https://mvnrepository.com/artifact/org.mockito/mockito-core
+  // https://stackoverflow.com/questions/19845213/how-to-get-the-methodinfo-of-a-java-8-method-reference
+  // compile group: 'org.mockito', name: 'mockito-core', version: '2.8.9'
 
-    // compile group: 'org.jodd', name: 'jodd-all', version: '3.8.6'
-    /*
-    // https://mvnrepository.com/artifact/org.jodd/jodd-core
-    compile group: 'org.jodd', name: 'jodd-core', version: '3.8.6'
-    // https://mvnrepository.com/artifact/org.jodd/jodd-bean
-    compile group: 'org.jodd', name: 'jodd-bean', version: '3.8.6'
-    // https://mvnrepository.com/artifact/org.jodd/jodd-proxetta
-    compile group: 'org.jodd', name: 'jodd-proxetta', version: '3.8.6'
-    */
+  // compile group: 'org.jodd', name: 'jodd-all', version: '3.8.6'
+  /*
+  // https://mvnrepository.com/artifact/org.jodd/jodd-core
+  compile group: 'org.jodd', name: 'jodd-core', version: '3.8.6'
+  // https://mvnrepository.com/artifact/org.jodd/jodd-bean
+  compile group: 'org.jodd', name: 'jodd-bean', version: '3.8.6'
+  // https://mvnrepository.com/artifact/org.jodd/jodd-proxetta
+  compile group: 'org.jodd', name: 'jodd-proxetta', version: '3.8.6'
+  */
 
+  testCompile('org.junit.jupiter:junit-jupiter-api:5.2.0')
+  testRuntime('org.junit.jupiter:junit-jupiter-engine:5.2.0')
 }
 // end::dependencies[]
 
