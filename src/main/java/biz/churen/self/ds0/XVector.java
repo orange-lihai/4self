@@ -311,7 +311,6 @@ public class XVector<E> {
     }
   }
 
-
   // equals
   @SuppressWarnings({"unchecked"})
   public boolean equals(XVector<? extends E> v) {

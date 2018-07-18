@@ -171,7 +171,38 @@ public class XAdjacencyMatrixGraph<V, E> extends XAbstractGraph<V, E> {
 
   // depth first search
   @Override public void dfs(int a) {
+    reset();
+    int v = a;
+    int[] clock = new int[]{0};
+    do {
+      if (VStatus.UNDISCOVERED == status(v)) {
+        DFS(v, clock);
+      }
+    } while (a != (v = (++v % this.n)));
+  }
 
+  // 还需要一个非递归版本
+  private void DFS(Integer v, int[] clock) {
+    XVertex<V> curV = vertexs.get(v);
+    curV.status = VStatus.DISCOVERED; curV.dTime = ++clock[0];
+    for (int u = firstNeighbor(v); u >= 0; u = nextNeighbor(v, u)) {
+      XVertex<V> nextU = vertexs.get(u);
+      XEdge<E> nextE = edges.get(v).get(u);
+      switch (nextU.status) {
+        case VISITED:
+          nextE.status = (curV.dTime < nextU.dTime) ? EStatus.FORWARD : EStatus.CROSS;
+          break;
+        case DISCOVERED:
+          nextE.status = EStatus.BACKWARD;
+          break;
+        case UNDISCOVERED:
+          nextE.status = EStatus.TREE; nextU.parent = v;
+          DFS(u, clock);
+          break;
+        default: break;
+      }
+    }
+    curV.status = VStatus.VISITED; curV.fTime = ++clock[0];
   }
 
   // bi-connected component
